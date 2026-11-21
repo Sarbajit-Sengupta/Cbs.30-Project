@@ -27,6 +27,7 @@ var context = canvas.getContext('2d');
 
 var grid = 16;
 var count = 0;
+var turnPending = false;
   
 var snake = {
   x: 160,
@@ -68,6 +69,7 @@ function loop() {
   // move snake by it's velocity
   snake.x += snake.dx;
   snake.y += snake.dy;
+  turnPending = false;
 
   // wrap snake position horizontally on edge of screen
   if (snake.x < 0) {
@@ -134,6 +136,9 @@ function loop() {
 
 // listen to keyboard events to move the snake
 document.addEventListener('keydown', function(e) {
+  if ([37, 38, 39, 40].indexOf(e.which) === -1) return;
+  e.preventDefault();
+  if (turnPending) return;
   // prevent snake from backtracking on itself by checking that it's 
   // not already moving on the same axis (pressing left while moving
   // left won't do anything, and pressing right while moving left
@@ -143,21 +148,25 @@ document.addEventListener('keydown', function(e) {
   if (e.which === 37 && snake.dx === 0) {
     snake.dx = -grid;
     snake.dy = 0;
+    turnPending = true;
   }
   // up arrow key
   else if (e.which === 38 && snake.dy === 0) {
     snake.dy = -grid;
     snake.dx = 0;
+    turnPending = true;
   }
   // right arrow key
   else if (e.which === 39 && snake.dx === 0) {
     snake.dx = grid;
     snake.dy = 0;
+    turnPending = true;
   }
   // down arrow key
   else if (e.which === 40 && snake.dy === 0) {
     snake.dy = grid;
     snake.dx = 0;
+    turnPending = true;
   }
 });
 
